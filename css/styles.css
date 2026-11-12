@@ -1,0 +1,274 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&display=swap");
+
+/* ---------- Colours & shared values ---------- */
+:root {
+  --bg: #0d1220;
+  --panel: #161d30;
+  --panel-hover: #1e2740;
+  --border: #2c3754;
+  --gold: #d8b866;
+  --gold-soft: #b89a4e;
+  --text: #e6e9f2;
+  --muted: #9aa3b8;
+  --radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(ellipse at top, #1b2440 0%, var(--bg) 60%) fixed;
+  color: var(--text);
+  font-family: "Inter", system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+/* ---------- Page layout ---------- */
+/* Results on the left, details panel on the right */
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  grid-template-areas:
+    "title   title"
+    "form    form"
+    "status  status"
+    "results details"
+    "more    .";
+  gap: 1rem 1.5rem;
+  align-items: start;
+}
+
+h1 {
+  grid-area: title;
+  margin: 0 0 0.5rem;
+  font-family: "Cinzel", serif;
+  font-size: 2.25rem;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  text-align: center;
+}
+
+/* ---------- Search form ---------- */
+#search-form {
+  grid-area: form;
+  display: flex;
+  gap: 0.5rem;
+}
+
+#search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font: inherit;
+}
+
+#search-input::placeholder {
+  color: var(--muted);
+}
+
+#search-input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(216, 184, 102, 0.2);
+}
+
+#search-form button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(var(--gold), var(--gold-soft));
+  color: #1a1408;
+  border: none;
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#search-form button:hover {
+  filter: brightness(1.1);
+}
+
+/* ---------- Status line ---------- */
+/* min-height reserves the line even when it's empty, so nothing jumps */
+#status {
+  grid-area: status;
+  margin: 0;
+  min-height: 1.5em;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- Result cards ---------- */
+#results {
+  grid-area: results;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  grid-template-areas:
+    "icon name"
+    "icon level";
+  column-gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.card:hover {
+  background: var(--panel-hover);
+  border-color: var(--gold-soft);
+  transform: translateY(-2px);
+}
+
+/* the clicked card */
+.card.selected {
+  background: var(--panel-hover);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold), 0 0 14px rgba(216, 184, 102, 0.25);
+}
+
+.card.selected h3 {
+  color: var(--gold);
+}
+
+.card img {
+  grid-area: icon;
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  align-self: center;
+}
+
+.card h3 {
+  grid-area: name;
+  align-self: end;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.card p {
+  grid-area: level;
+  align-self: start;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* ---------- Details panel ---------- */
+#details {
+  grid-area: details;
+  position: sticky;   /* stays in view while you scroll the results */
+  top: 1.5rem;
+  min-height: 8rem;   /* keeps the panel from collapsing while details load */
+  padding: 1.25rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--gold);
+  border-radius: var(--radius);
+}
+
+/* Hint text before anything is clicked */
+#details:empty::before {
+  content: "Click an item to see its details.";
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Hide the panel entirely until there are results */
+#results:empty ~ #details {
+  display: none;
+}
+
+#details .loading {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ---------- Load more button ---------- */
+#load-more {
+  grid-area: more;
+  justify-self: center;
+  padding: 0.65rem 2rem;
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold-soft);
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#load-more:hover {
+  background: rgba(216, 184, 102, 0.1);
+}
+
+#load-more:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+#load-more[hidden] {
+  display: none;
+}
+
+#details img {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+}
+
+#details h2 {
+  margin: 0.5rem 0 0.25rem;
+  font-family: "Cinzel", serif;
+  font-size: 1.3rem;
+  color: var(--gold);
+}
+
+#details p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+#details .description {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  white-space: pre-line;   /* keeps the line breaks in item descriptions */
+}
+
+/* ---------- Small screens: one column ---------- */
+@media (max-width: 800px) {
+  main {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "form"
+      "status"
+      "details"
+      "results"
+      "more";
+  }
+
+  #details {
+    position: static;
+  }
+}

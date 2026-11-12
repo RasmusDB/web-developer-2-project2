@@ -1,10 +1,18 @@
-name: Check API secret
+name: Build and deploy
 
 on: [push]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  check-secret:
+  deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     env:
       MY_API_KEY: ${{ secrets.MY_API_KEY }}
@@ -13,5 +21,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Run app.js with the secret
+      - name: Check that the secret exists
         run: node app.js
+
+      - name: Create config.js from the secret
+        run: echo "const API_BASE = '$MY_API_KEY';" > js/config.js
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
