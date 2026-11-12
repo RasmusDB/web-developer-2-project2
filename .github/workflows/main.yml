@@ -1,0 +1,17 @@
+name: Check API secret
+
+on: [push]
+
+jobs:
+  check-secret:
+    runs-on: ubuntu-latest
+
+    env:
+      MY_API_KEY: ${{ secrets.MY_API_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run app.js with the secret
+        run: node app.js
